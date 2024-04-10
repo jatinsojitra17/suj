@@ -75,12 +75,10 @@ class ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Handle tapping on a product
-        // You can navigate to a detailed view or perform any action here
       Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => SubCategoryScreen(mainCategory: name,sourcePage: 'Fit Products'), // Pass any data to the new screen if needed
+            builder: (context) => SubCategoryScreen(mainCategory: name,sourcePage: 'Fit Products'), 
           ),
         );
       },
