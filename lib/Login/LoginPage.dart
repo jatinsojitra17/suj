@@ -130,34 +130,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   SizedBox(height: 20),
                   ElevatedButton(
-                    // onPressed: _login,
                     onPressed: () async {
-                      // try {
-                      //   FirebaseAuth.instance
-                      //       .signInWithEmailAndPassword(
-                      //           email: _emailController.text,
-                      //           password: _passwordController.text)
-                      //       .then((value) {
-                      //     Navigator.push(
-                      //         context,
-                      //         MaterialPageRoute(
-                      //             builder: (context) => DashboardPage()));
-                      //   });
-                      // } catch (e) {
-                      //   // Handle login errors
-                      //   // print('Login failed: $e');
-                      //   // Show error message in toast
-                      //   Fluttertoast.showToast(
-                      //     msg: 'Login failed: $e',
-                      //     backgroundColor: Colors.red,
-                      //     textColor: Colors.white,
-                      //     fontSize: 16.0,
-                      //   );
-                      //   //     // Animate the text fields when the email and password do not match
-                      //   setState(() {
-                      //     _isIncorrect = true;
-                      //   });
-                      // }
                       mail = _emailController.text;
                       try {
                         UserCredential userCredential = await FirebaseAuth
