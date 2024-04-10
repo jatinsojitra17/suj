@@ -1,0 +1,111 @@
+Future<void> generatePDF() async {
+    // log('1');
+    final pdf = pw.Document();
+
+    try {
+      final font = await rootBundle.load('assets/fonts/OpenSansRegular.ttf');
+      final ttf = pw.Font.ttf(font);
+
+      // Add content to the PDF
+      pdf.addPage(
+        pw.MultiPage(
+          header: (pw.Context context) => pw.Container(
+            alignment: pw.Alignment.center,
+            margin: pw.EdgeInsets.only(bottom: 20.0),
+            child: pw.Column(
+              children: [
+                pw.Text(
+                  '${widget.comName}',
+                  style: pw.TextStyle(
+                      font: ttf, fontSize: 20, fontWeight: pw.FontWeight.bold),
+                  // style: pw.TextStyle(fontSize: 20,
+                  // fontWeight: pw.FontWeight.bold
+                  // ),
+                ),
+                pw.SizedBox(height: 10),
+                pw.Text(
+                  'Date: ${DateFormat('yyyy-MM-dd').format(DateTime.now())}',
+                ),
+              ],
+            ),
+          ),
+          footer: (pw.Context context) => pw.Container(
+            alignment: pw.Alignment.centerRight,
+            margin: pw.EdgeInsets.only(top: 20.0),
+            child: pw.Text(
+              'Page ${context.pageNumber}',
+              style: pw.TextStyle(font: ttf, fontSize: 12),
+              // style: pw.TextStyle(fontSize: 12),
+            ),
+          ),
+          build: (pw.Context context) {
+            return <pw.Widget>[
+              pw.Header(
+                level: 1,
+                child: pw.Text(
+                  'Orders',
+                  textAlign: pw.TextAlign.center,
+                ),
+              ),
+              // ignore: deprecated_member_use
+              pw.Table.fromTextArray(
+                headerDecoration:
+                    pw.BoxDecoration(color: PdfColor.fromInt(0xFF37BB9B)),
+                headers: ['Sequence number', 'Model Name', 'Quantity'],
+                data: _orders
+                    .map((order) => [
+                          (_orders.indexOf(order) + 1).toString(),
+                          order.modelName,
+                          '${order.quantity} BOX'
+                        ])
+                    .toList(),
+                cellStyle: pw.TextStyle(color: PdfColors.black, font: ttf),
+                cellAlignment: pw.Alignment.center,
+              ),
+            ];
+          },
+        ),
+      );
+      log('3');
+      // Save the PDF document
+      final fileName =
+          '${widget.comName}_${DateFormat('yyyyMMdd').format(DateTime.now())}_order.pdf';
+      pdf.save().then((value) {
+        final file = File(fileName);
+        file.writeAsBytesSync(value);
+      });
+    } catch (e) {
+      log('Error loading font: $e');
+    }
+  }
+
+  // Function to generate PDF document
+  // void generatePDF() {
+  //   // Create a PDF document
+  //   final pdf = pw.Document();
+
+  //   // Add content to the PDF
+  //   pdf.addPage(
+  //     pw.Page(
+  //       build: (pw.Context context) {
+  //         return pw.Column(
+  //           children: [
+  //             pw.Text('Company Name: Your Company'),
+  //             pw.Text('Date: ${DateTime.now().toString()}'),
+  //             pw.SizedBox(height: 20),
+  //             pw.Text('Orders:'),
+  //             for (var order in _orders)
+  //               pw.Text('${order.modelName}: ${order.quantity}'),
+  //           ],
+  //         );
+  //       },
+  //     ),
+  //   );
+
+  //   // Save the PDF document
+  //   // You can choose to save it to device or display it in the app
+  //   // For displaying in the app, you can use plugins like `flutter_pdfview`
+  //   // For saving to device, you can use `pdf.save()` method
+  //   // For example, pdf.save('/path/to/save/pdf.pdf');
+  //   pdf.save();
+  // }

@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "977939049726",
+    "project_id": "sujin-172j4",
+    "storage_bucket": "sujin-172j4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:977939049726:android:58bba3bfb1776bf36e49af",
+        "android_client_info": {
+          "package_name": "com.company.sujin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDx9k2edwC5X9AyXc6y3bdXXfa2ERaszVM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:977939049726:android:cdeea46fb23bcb726e49af",
+        "android_client_info": {
+          "package_name": "com.example.sujin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDx9k2edwC5X9AyXc6y3bdXXfa2ERaszVM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:977939049726:android:34ddeba23c57525a6e49af",
+        "android_client_info": {
+          "package_name": "com.sujin.application"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDx9k2edwC5X9AyXc6y3bdXXfa2ERaszVM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
