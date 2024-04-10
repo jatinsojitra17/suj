@@ -4,7 +4,7 @@ import 'package:sujin/Functions/product_data.dart';
 
 class SubCategoryScreen extends StatelessWidget {
   final String mainCategory;
-  final String sourcePage; // Add source page parameter
+  final String sourcePage;
 
   const SubCategoryScreen({
     Key? key,
@@ -62,9 +62,6 @@ class SubCategoryScreen extends StatelessWidget {
                   String subCategory = subCategories[index];
                   return GestureDetector(
                     onTap: () {
-                      // Handle tapping on a sub-category
-                      // You can navigate to a detailed view or perform any action here
-                      // Pass the selected product information to the new page
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -182,7 +179,7 @@ class SubCategoryScreen extends StatelessWidget {
     List<String> FitProducts = [];
     switch (mainCategory) {
       case 'Cabinet Handles':
-        FitProducts = ['SI 008', 'SI 063', 'SI 069','SI 204'];
+        FitProducts = ['SI 008', 'SI 063', 'SI 069', 'SI 204'];
         return FitProducts.toList();
 
       case 'Conceal':
@@ -217,8 +214,8 @@ class SubCategoryScreen extends StatelessWidget {
 
   int _calculateCrossAxisCount(double maxWidth) {
     // Calculate the number of cards per row based on the available width
-  int crossAxisCount = maxWidth > 600 ? maxWidth ~/ 200 : maxWidth ~/ 150;
-  // Adjust the card width (200) and the breakpoint (600) as needed
-  return crossAxisCount;
+    int crossAxisCount = maxWidth > 600 ? maxWidth ~/ 200 : maxWidth ~/ 150;
+    // Adjust the card width (200) and the breakpoint (600) as needed
+    return crossAxisCount;
   }
 }
