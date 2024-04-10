@@ -32,8 +32,8 @@ class _ProductSizesPageState extends State<ProductSizesPage> {
   @override
   void initState() {
     super.initState();
-    _selectedSize = ''; // Initially no size is selected
-    _selectedFinish = ''; // Initially no finish is selected
+    _selectedSize = '';
+    _selectedFinish = '';
     // Fetch data from Firestore when the page is initialized
     _fetchAvailablePiecesData();
   }
@@ -172,9 +172,10 @@ class _ProductSizesPageState extends State<ProductSizesPage> {
                           SizedBox(height: 10),
                           Container(
                             color: Colors.white.withOpacity(0.3),
-                            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                height: 60,
-                width: double.infinity,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 10),
+                            height: 60,
+                            width: double.infinity,
                             child: SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Row(
@@ -191,31 +192,26 @@ class _ProductSizesPageState extends State<ProductSizesPage> {
                                           getFinishes(widget.productName);
                                     },
                                     child: Container(
-                                      // margin: EdgeInsets.only(right: 10),
-                                      // padding: EdgeInsets.all(8),
-                                      // decoration: BoxDecoration(
-                                      //   color: _selectedSize == size
-                                      //       ? Color(0xFF37BB9B)
-                                      //       : Colors.transparent,
-                                      //   borderRadius: BorderRadius.circular(20),
-                                      //   border: Border.all(
-                                      //     color: Colors.white,
-                                      //     width: 1,
-                                      //   ),
-                                      // ),
-                                      // child: Text(
-                                      //   size,
-                                      //   style: TextStyle(
-                                      //     color: _selectedSize == size
-                                      //         ? Colors.white
-                                      //         : Colors.white.withOpacity(0.5),
-                                      //     fontWeight: FontWeight.bold,
-                                      //   ),
-                                      // ),
                                       alignment: Alignment.center,
-                                      margin: EdgeInsets.symmetric(horizontal: 10),
+                                      margin:
+                                          EdgeInsets.symmetric(horizontal: 10),
                                       padding: EdgeInsets.all(8),
-                                      decoration: BoxDecoration(color:  _selectedSize == size ? Color(0xFF37BB9B):Colors.transparent,borderRadius: BorderRadius.circular(20),border: Border.all(color: Colors.white,width: 1),),child: Text(size,style: TextStyle(color: _selectedSize == size ? Colors.white:Colors.white.withOpacity(0.5),fontWeight: FontWeight.bold),),
+                                      decoration: BoxDecoration(
+                                        color: _selectedSize == size
+                                            ? Color(0xFF37BB9B)
+                                            : Colors.transparent,
+                                        borderRadius: BorderRadius.circular(20),
+                                        border: Border.all(
+                                            color: Colors.white, width: 1),
+                                      ),
+                                      child: Text(
+                                        size,
+                                        style: TextStyle(
+                                            color: _selectedSize == size
+                                                ? Colors.white
+                                                : Colors.white.withOpacity(0.5),
+                                            fontWeight: FontWeight.bold),
+                                      ),
                                     ),
                                   );
                                 }).toList(),
@@ -243,7 +239,6 @@ class _ProductSizesPageState extends State<ProductSizesPage> {
                                     });
                                   },
                                   child: Container(
-                                    
                                     padding: EdgeInsets.symmetric(
                                         vertical: 8, horizontal: 16),
                                     margin: EdgeInsets.only(right: 10),
@@ -282,13 +277,11 @@ class _ProductSizesPageState extends State<ProductSizesPage> {
                                           _selectedFinish.isNotEmpty) {
                                         int currentPieces = availPieces;
                                         int addedPieces =
-                                            int.tryParse(updatePiece.text) ??
-                                                0;
+                                            int.tryParse(updatePiece.text) ?? 0;
                                         int newPiecesCount =
                                             currentPieces + addedPieces;
 
-                                        updateAvailablePieces(
-                                            newPiecesCount);
+                                        updateAvailablePieces(newPiecesCount);
                                       } else {
                                         print(
                                             'Please select size and finish first.');
@@ -314,12 +307,10 @@ class _ProductSizesPageState extends State<ProductSizesPage> {
                                     child: SizedBox(
                                       width: constraints.maxWidth * 0.4,
                                       child: TextField(
-                                        keyboardType:
-                                            TextInputType.number,
+                                        keyboardType: TextInputType.number,
                                         controller: updatePiece,
                                         decoration: InputDecoration(
-                                          hintText:
-                                              'Enter quantity (max 1000)',
+                                          hintText: 'Enter quantity (max 1000)',
                                           fillColor: Colors.white,
                                           filled: true,
                                           border: OutlineInputBorder(
@@ -343,15 +334,13 @@ class _ProductSizesPageState extends State<ProductSizesPage> {
                                           _selectedFinish.isNotEmpty) {
                                         int currentPieces = availPieces;
                                         int removedPieces =
-                                            int.tryParse(updatePiece.text) ??
-                                                0;
+                                            int.tryParse(updatePiece.text) ?? 0;
                                         int newPiecesCount =
                                             currentPieces - removedPieces;
                                         if (newPiecesCount < 0) {
                                           newPiecesCount = 0;
                                         }
-                                        updateAvailablePieces(
-                                            newPiecesCount);
+                                        updateAvailablePieces(newPiecesCount);
                                       } else {
                                         print(
                                             'Please select size and finish first.');
@@ -396,11 +385,10 @@ class _ProductSizesPageState extends State<ProductSizesPage> {
                                     width: constraints.maxWidth * 0.40,
                                     height: constraints.maxWidth * 0.45,
                                     child: CustomTable(
-                                        sizes: getSizes(
-                                            widget.mainCategory,
+                                        sizes: getSizes(widget.mainCategory,
                                             widget.productName),
-                                        packing: getPacking(
-                                            widget.productName)),
+                                        packing:
+                                            getPacking(widget.productName)),
                                   ),
                                 ],
                               ),
