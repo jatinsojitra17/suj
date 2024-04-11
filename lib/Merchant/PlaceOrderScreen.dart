@@ -1,5 +1,5 @@
-
 import 'dart:developer';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sujin/Functions/product_data.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
@@ -61,6 +61,8 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
           var order = _orders[i];
           addProducts((i + 1).toString(), order.modelName,
               '${order.quantity} BOX', grid);
+
+           saveOrderToFirebase(widget.comName, order.modelName, order.quantity);
         }
       } else {
         log('Orders list is empty');
@@ -82,6 +84,39 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
       log('Error generating PDF: $e\n$stackTrace');
     }
   }
+
+  // Function to save order data to Firebase
+Future<void> saveOrderToFirebase(
+    String companyName, String modelName, int quantity) async {
+  try {
+    // Create a reference to the orders collection
+    CollectionReference orders = FirebaseFirestore.instance.collection('orders');
+    
+    // Check if there is an existing order for today from this company
+    QuerySnapshot querySnapshot = await orders
+        .where('companyName', isEqualTo: companyName)
+        .where('date', isEqualTo: DateFormat('yyyy-MM-dd').format(DateTime.now()))
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      // If an order exists, update the quantity
+      querySnapshot.docs.forEach((doc) {
+        int currentQuantity = doc['quantity'] ?? 0;
+        orders.doc(doc.id).update({'quantity': currentQuantity + quantity});
+      });
+    } else {
+      // If no order exists, create a new one
+      await orders.add({
+        'companyName': companyName,
+        'date': DateFormat('yyyy-MM-dd').format(DateTime.now()),
+        'modelName': modelName,
+        'quantity': quantity
+      });
+    }
+  } catch (e) {
+    log('Error saving order to Firebase: $e');
+  }
+}
 
   void addProducts(String i, String modelName, String quantity, PdfGrid grid) {
     try {
