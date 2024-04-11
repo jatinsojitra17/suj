@@ -28,6 +28,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
           _buildNavItem(Icons.inventory, 'Ready Products', 0),
           _buildNavItem(Icons.build, 'Fit Products', 1),
           _buildNavItem(Icons.colorize, 'Raw Material', 2),
+          _buildNavItem(Icons.shopping_cart,'Orders', 3),
         ],
       ),
     );
