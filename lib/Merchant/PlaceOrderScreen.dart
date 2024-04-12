@@ -289,9 +289,16 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
                                       quantity: quantity,
                                     ));
                                   } else {
-                                    if (quantity == 0) {
+                                    // Update the quantity or remove the entry if the latest quantity is 0 or negative
+                                    if (quantity <= 0) {
                                       _orders.removeWhere((order) =>
                                           order.modelName == modelName);
+                                    } else {
+                                      // Update the quantity
+                                      _orders
+                                          .firstWhere((order) =>
+                                              order.modelName == modelName)
+                                          .quantity = quantity;
                                     }
                                   }
                                   _orders;
