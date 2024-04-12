@@ -63,6 +63,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
               '${order.quantity} BOX', grid);
 
           saveOrderToFirebase(widget.comName, order.modelName, order.quantity);
+          printOrdersFromFirebase();
         }
       } else {
         log('Orders list is empty');
@@ -119,6 +120,28 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
       log('Error saving order to Firebase: $e');
     }
   }
+
+  Future<void> printOrdersFromFirebase() async {
+  try {
+    // Reference to the orders collection
+    CollectionReference orders = FirebaseFirestore.instance.collection('orders');
+
+    // Get all documents from the collection
+    QuerySnapshot querySnapshot = await orders.get();
+
+    // Print each document's data
+    querySnapshot.docs.forEach((doc) {
+      print('Document ID: ${doc.id}');
+      print('Company Name: ${doc['companyName']}');
+      print('Date: ${doc['date']}');
+      print('Model Name: ${doc['modelName']}');
+      print('Quantity: ${doc['quantity']}');
+      print('----------------------------------');
+    });
+  } catch (e) {
+    print('Error fetching data from Firebase: $e');
+  }
+}
 
   void addProducts(String i, String modelName, String quantity, PdfGrid grid) {
     try {
