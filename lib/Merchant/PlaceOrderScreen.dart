@@ -96,14 +96,15 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
 
       // Check if there is an existing order for today from this company
       QuerySnapshot querySnapshot = await orders
-          .where('companyName', isEqualTo: companyName)
-          .where('date',
-              isEqualTo: DateFormat('yyyy-MM-dd').format(DateTime.now()))
-          .get();
-
+    .where('companyName', isEqualTo: companyName)
+    .where('date', isEqualTo: DateFormat('yyyy-MM-dd').format(DateTime.now()))
+    .where('modelName', arrayContains: modelName.split(' ')) // Check if modelName is contained in the document's modelName array
+    .get();
+print('Model Name (Adding): $modelName');
       if (querySnapshot.docs.isNotEmpty) {
         // If an order exists, update the quantity for each model
         querySnapshot.docs.forEach((doc) {
+          print('Model Name (Query): ${doc['modelName']}');
           int currentQuantity = doc['quantity'] ?? 0;
           orders.doc(doc.id).update({'quantity': currentQuantity + quantity});
         });
@@ -131,12 +132,14 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
 
     // Print each document's data
     querySnapshot.docs.forEach((doc) {
-      print('Document ID: ${doc.id}');
+      if(doc['companyName']=='VH'){
+        print('Document ID: ${doc.id}');
       print('Company Name: ${doc['companyName']}');
       print('Date: ${doc['date']}');
-      print('Model Name: ${doc['modelName']}');
+      print('Model Name: ${doc['modelName']}'); 
       print('Quantity: ${doc['quantity']}');
       print('----------------------------------');
+      }
     });
   } catch (e) {
     print('Error fetching data from Firebase: $e');
