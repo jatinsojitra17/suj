@@ -62,7 +62,7 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
           addProducts((i + 1).toString(), order.modelName,
               '${order.quantity} BOX', grid);
 
-           saveOrderToFirebase(widget.comName, order.modelName, order.quantity);
+          saveOrderToFirebase(widget.comName, order.modelName, order.quantity);
         }
       } else {
         log('Orders list is empty');
@@ -85,38 +85,40 @@ class _PlaceOrderScreenState extends State<PlaceOrderScreen> {
     }
   }
 
-  // Function to save order data to Firebase
-Future<void> saveOrderToFirebase(
-    String companyName, String modelName, int quantity) async {
-  try {
-    // Create a reference to the orders collection
-    CollectionReference orders = FirebaseFirestore.instance.collection('orders');
-    
-    // Check if there is an existing order for today from this company
-    QuerySnapshot querySnapshot = await orders
-        .where('companyName', isEqualTo: companyName)
-        .where('date', isEqualTo: DateFormat('yyyy-MM-dd').format(DateTime.now()))
-        .get();
+// Function to save order data to Firebase
+  Future<void> saveOrderToFirebase(
+      String companyName, String modelName, int quantity) async {
+    try {
+      // Create a reference to the orders collection
+      CollectionReference orders =
+          FirebaseFirestore.instance.collection('orders');
 
-    if (querySnapshot.docs.isNotEmpty) {
-      // If an order exists, update the quantity
-      querySnapshot.docs.forEach((doc) {
-        int currentQuantity = doc['quantity'] ?? 0;
-        orders.doc(doc.id).update({'quantity': currentQuantity + quantity});
-      });
-    } else {
-      // If no order exists, create a new one
-      await orders.add({
-        'companyName': companyName,
-        'date': DateFormat('yyyy-MM-dd').format(DateTime.now()),
-        'modelName': modelName,
-        'quantity': quantity
-      });
+      // Check if there is an existing order for today from this company
+      QuerySnapshot querySnapshot = await orders
+          .where('companyName', isEqualTo: companyName)
+          .where('date',
+              isEqualTo: DateFormat('yyyy-MM-dd').format(DateTime.now()))
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        // If an order exists, update the quantity for each model
+        querySnapshot.docs.forEach((doc) {
+          int currentQuantity = doc['quantity'] ?? 0;
+          orders.doc(doc.id).update({'quantity': currentQuantity + quantity});
+        });
+      } else {
+        // If no order exists, create a new one
+        await orders.add({
+          'companyName': companyName,
+          'date': DateFormat('yyyy-MM-dd').format(DateTime.now()),
+          'modelName': modelName,
+          'quantity': quantity
+        });
+      }
+    } catch (e) {
+      log('Error saving order to Firebase: $e');
     }
-  } catch (e) {
-    log('Error saving order to Firebase: $e');
   }
-}
 
   void addProducts(String i, String modelName, String quantity, PdfGrid grid) {
     try {
@@ -150,7 +152,6 @@ Future<void> saveOrderToFirebase(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              
               colors: [
                 Color(0xFF37BB9B),
                 Color(0xFF71D9E2), // Lighter shade of the brand color
@@ -221,7 +222,8 @@ Future<void> saveOrderToFirebase(
                                       prefixIcon: Icon(Icons.article,
                                           color: Colors.white),
                                       border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(30.0),
+                                        borderRadius:
+                                            BorderRadius.circular(30.0),
                                         borderSide: BorderSide.none,
                                       ),
                                       contentPadding: EdgeInsets.symmetric(
@@ -263,11 +265,11 @@ Future<void> saveOrderToFirebase(
                                 // Add functionality to process the order here
                                 String modelName = _modelNameController.text;
                                 String quantityText = _quantityController.text;
-                    
+
                                 int quantity = int.tryParse(quantityText) ?? 0;
                                 print('Model Name: $modelName');
                                 print('Quantity: $quantity');
-                    
+
                                 // Check if the model is already present in orders
                                 bool modelExists = false;
                                 for (var order in _orders) {
@@ -278,7 +280,7 @@ Future<void> saveOrderToFirebase(
                                     break;
                                   }
                                 }
-                    
+
                                 // If the model is not present, add it to the orders
                                 setState(() {
                                   if (!modelExists) {
@@ -286,6 +288,11 @@ Future<void> saveOrderToFirebase(
                                       modelName: modelName,
                                       quantity: quantity,
                                     ));
+                                  } else {
+                                    if (quantity == 0) {
+                                      _orders.removeWhere((order) =>
+                                          order.modelName == modelName);
+                                    }
                                   }
                                   _orders;
                                 });
@@ -309,8 +316,8 @@ Future<void> saveOrderToFirebase(
                                     side: BorderSide.none,
                                   ),
                                 ),
-                                padding:
-                                    MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                padding: MaterialStateProperty.all<
+                                    EdgeInsetsGeometry>(
                                   EdgeInsets.symmetric(vertical: 16),
                                 ),
                                 elevation: MaterialStateProperty.all<double>(5),
@@ -403,8 +410,8 @@ Future<void> saveOrderToFirebase(
                                     side: BorderSide.none,
                                   ),
                                 ),
-                                padding:
-                                    MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                padding: MaterialStateProperty.all<
+                                    EdgeInsetsGeometry>(
                                   EdgeInsets.symmetric(vertical: 16),
                                 ),
                                 elevation: MaterialStateProperty.all<double>(5),
