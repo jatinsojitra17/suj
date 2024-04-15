@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sujin/Inventory/FitProductsScreen.dart';
+import 'package:sujin/Inventory/Orders.dart';
 import 'package:sujin/Inventory/RawMaterialScreen.dart';
 import 'package:sujin/Inventory/ReadyProductsScreen.dart';
 import 'package:sujin/Login/LoginPage.dart';
@@ -19,6 +20,7 @@ class _DashboardPageState extends State<DashboardPage> {
     ReadyProductsScreen(),
     FitProductsScreen(),
     RawMaterialScreen(),
+    OrdersPage(),
   ];
 
   void _onItemTapped(int index) {
