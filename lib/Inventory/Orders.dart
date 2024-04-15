@@ -24,6 +24,18 @@ class _OrdersPageState extends State<OrdersPage> {
     }
   }
 
+  Future<List<String>> _getCompanyNames() async {
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection('Users').get();
+
+    List<String> companyNames = [];
+    querySnapshot.docs.forEach((doc) {
+      companyNames.add(doc['companyName']);
+    });
+
+    return companyNames;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,45 +43,61 @@ class _OrdersPageState extends State<OrdersPage> {
         title: Text('Orders'),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            DropdownButton<String>(
-              value: selectedCompany,
-              onChanged: (String? newValue) {
-                setState(() {
-                  selectedCompany = newValue!;
-                });
-              },
-              items: <String>['Company A', 'Company B', 'Company C']
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-            ElevatedButton(
-              onPressed: () => _showDatePicker(context),
-              child: Text('Select Date'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                // Query orders based on selectedCompany and selectedDate
-                QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-                    .collection('orders')
-                    .where('companyName', isEqualTo: selectedCompany)
-                    .where('date', isEqualTo: selectedDate)
-                    .get();
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              FutureBuilder<List<String>>(
+                future: _getCompanyNames(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    return DropdownButton<String>(
+                      value: selectedCompany,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedCompany = newValue!;
+                        });
+                      },
+                      items: snapshot.data!
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    );
+                  }
+                },
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () => _showDatePicker(context),
+                child: Text('Select Date'),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  // Query orders based on selectedCompany and selectedDate
+                  QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+                      .collection('orders')
+                      .where('companyName', isEqualTo: selectedCompany)
+                      .where('date', isEqualTo: selectedDate)
+                      .get();
 
-                // Display orders
-                querySnapshot.docs.forEach((doc) {
-                  print('Model Name: ${doc['modelName']}, Quantity: ${doc['quantity']}');
-                });
-              },
-              child: Text('Show Orders'),
-            ),
-          ],
+                  // Display orders
+                  querySnapshot.docs.forEach((doc) {
+                    print('Model Name: ${doc['modelName']}, Quantity: ${doc['quantity']}');
+                  });
+                },
+                child: Text('Show Orders'),
+              ),
+            ],
+          ),
         ),
       ),
     );
