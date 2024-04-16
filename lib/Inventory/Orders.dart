@@ -8,18 +8,19 @@ class OrdersPage extends StatefulWidget {
   _OrdersPageState createState() => _OrdersPageState();
 }
 
-
 class _OrdersPageState extends State<OrdersPage> {
-@override
+  String selectedCompany = '';
+  DateTime selectedDate = DateTime.now();
+  List<String> companyNames = [];
+  late String selcompany;
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _getCompanyNames();
+selcompany = companyNames[0];
   }
 
-  String selectedCompany = '';
-  DateTime selectedDate = DateTime.now();
-  List<String> companyNames = [];
 
   Future<void> _showDatePicker(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
@@ -39,7 +40,6 @@ class _OrdersPageState extends State<OrdersPage> {
     QuerySnapshot querySnapshot =
         await FirebaseFirestore.instance.collection('Users').get();
 
-    
     querySnapshot.docs.forEach((doc) {
       String companyName = doc['company name'];
       print('Company Name: $companyName');
@@ -62,50 +62,50 @@ class _OrdersPageState extends State<OrdersPage> {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: 
-            <Widget>[
-              FutureBuilder<List<String>>(
-                future: _getCompanyNames(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else {
-                    return 
-                    // DropdownButton<String>(
-                    //   value: selectedCompany,
-                    //   onChanged: (String? newValue) {
-                    //     setState(() {
-                    //       selectedCompany = newValue!;
-                    //     });
-                    //   },
-                    //   items: snapshot.data!
-                    //       .map<DropdownMenuItem<String>>((String value) {
-                    //     return DropdownMenuItem<String>(
-                    //       value: value,
-                    //       child: Text(value),
-                    //     );
-                    //   }).toList(),
-                    // );
+            children: [
+              // DropdownButton<String>(
+              //   value: selectedCompany,
+              //   onChanged: (String? newValue) {
+              //     setState(() {
+              //       selectedCompany = newValue!;
+              //     });
+              //   },
+              //   items: snapshot.data!
+              //       .map<DropdownMenuItem<String>>((String value) {
+              //     return DropdownMenuItem<String>(
+              //       value: value,
+              //       child: Text(value),
+              //     );
+              //   }).toList(),
+              // );
 
-                    DropdownButton<String>(
-  value: selectedCompany,
-  onChanged: (String? newValue) {
-    setState(() {
-      selectedCompany = newValue!;
-    });
-  },
-  items: companyNames.map((String value) {
-    return DropdownMenuItem<String>(
-      value: value,
-      child: Text(value),
-    );
-  }).toList(),
-);
+              DropdownButton(
+                isExpanded: true,
+                value: selcompany,
+                // value: selectedCompany.isNotEmpty ? selectedCompany : companyNames[0],
+                // value: selectedCompany.isNotEmpty
+                // ? selectedCompany
+                // : companyNames.isNotEmpty
+                //     ? companyNames[0]
+                //     : null,
 
-                  }
+                onChanged: (newValue) {
+                  setState(() {
+                    selectedCompany = newValue!;
+                  });
                 },
+                items: companyNames
+                    .map(
+                      (e) => DropdownMenuItem(value: e, child: Text(e)),
+                    )
+                    .toList(),
+                // items:
+                //     companyNames.map<DropdownMenuItem<String>>((String value) {
+                //   return DropdownMenuItem<String>(
+                //     value: value,
+                //     child: Text(value),
+                //   );
+                // }).toList(),
               ),
               SizedBox(height: 20),
               ElevatedButton(
