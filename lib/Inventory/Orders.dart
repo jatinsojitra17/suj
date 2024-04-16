@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -6,9 +8,18 @@ class OrdersPage extends StatefulWidget {
   _OrdersPageState createState() => _OrdersPageState();
 }
 
+
 class _OrdersPageState extends State<OrdersPage> {
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _getCompanyNames();
+  }
+
   String selectedCompany = '';
   DateTime selectedDate = DateTime.now();
+  List<String> companyNames = [];
 
   Future<void> _showDatePicker(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
@@ -28,11 +39,15 @@ class _OrdersPageState extends State<OrdersPage> {
     QuerySnapshot querySnapshot =
         await FirebaseFirestore.instance.collection('Users').get();
 
-    List<String> companyNames = [];
+    
     querySnapshot.docs.forEach((doc) {
-      companyNames.add(doc['companyName']);
+      String companyName = doc['company name'];
+      print('Company Name: $companyName');
+      if (!companyNames.contains(companyName)) {
+        companyNames.add(companyName);
+      }
     });
-
+    log('${companyNames}');
     return companyNames;
   }
 
@@ -47,7 +62,8 @@ class _OrdersPageState extends State<OrdersPage> {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
+            children: 
+            <Widget>[
               FutureBuilder<List<String>>(
                 future: _getCompanyNames(),
                 builder: (context, snapshot) {
@@ -56,21 +72,38 @@ class _OrdersPageState extends State<OrdersPage> {
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else {
-                    return DropdownButton<String>(
-                      value: selectedCompany,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          selectedCompany = newValue!;
-                        });
-                      },
-                      items: snapshot.data!
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    );
+                    return 
+                    // DropdownButton<String>(
+                    //   value: selectedCompany,
+                    //   onChanged: (String? newValue) {
+                    //     setState(() {
+                    //       selectedCompany = newValue!;
+                    //     });
+                    //   },
+                    //   items: snapshot.data!
+                    //       .map<DropdownMenuItem<String>>((String value) {
+                    //     return DropdownMenuItem<String>(
+                    //       value: value,
+                    //       child: Text(value),
+                    //     );
+                    //   }).toList(),
+                    // );
+
+                    DropdownButton<String>(
+  value: selectedCompany,
+  onChanged: (String? newValue) {
+    setState(() {
+      selectedCompany = newValue!;
+    });
+  },
+  items: companyNames.map((String value) {
+    return DropdownMenuItem<String>(
+      value: value,
+      child: Text(value),
+    );
+  }).toList(),
+);
+
                   }
                 },
               ),
@@ -91,7 +124,8 @@ class _OrdersPageState extends State<OrdersPage> {
 
                   // Display orders
                   querySnapshot.docs.forEach((doc) {
-                    print('Model Name: ${doc['modelName']}, Quantity: ${doc['quantity']}');
+                    print(
+                        'Model Name: ${doc['modelName']}, Quantity: ${doc['quantity']}');
                   });
                 },
                 child: Text('Show Orders'),
