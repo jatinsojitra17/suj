@@ -5,6 +5,7 @@ import 'package:sujin/Dashboard.dart';
 import 'package:sujin/Login/SignupPage.dart';
 import 'package:sujin/Merchant/MerchantPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -25,25 +26,85 @@ class _LoginPageState extends State<LoginPage> {
     checkLoginStatus();
   }
 
+  // void checkLoginStatus() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? userEmail = prefs.getString('userEmail');
+  //   if (userEmail != null) {
+  //     // User is already logged in, navigate to DashboardPage or MerchantPage
+  //     if (userEmail == 'jatinpatel59968@gmail.com') {
+  //       Navigator.pushReplacement(
+  //         context,
+  //         MaterialPageRoute(builder: (context) => DashboardPage()),
+  //       );
+  //     } else {
+  //       Navigator.pushReplacement(
+  //         context,
+  //         MaterialPageRoute(
+  //             builder: (context) => MerchantPage(companymail: userEmail)),
+  //       );
+  //     }
+  //   }
+  // }
   void checkLoginStatus() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? userEmail = prefs.getString('userEmail');     
-    if (userEmail != null) {
-      // User is already logged in, navigate to DashboardPage or MerchantPage
-      if (userEmail == 'jatinpatel59968@gmail.com') {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => DashboardPage()),
-        );
-      } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => MerchantPage(companymail: userEmail)),
-        );
-      }
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? userEmail = prefs.getString('userEmail');
+  if (userEmail != null) {
+    // User is already logged in, navigate to DashboardPage or MerchantPage
+    if (userEmail == 'jatinpatel59968@gmail.com') {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => DashboardPage()),
+      );
+    } else {
+      // Retrieve user role from Firestore
+      FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userEmail)
+          .get()
+          .then((DocumentSnapshot userSnapshot) {
+        if (userSnapshot.exists) {
+          Map<String, dynamic>? userData =
+              userSnapshot.data() as Map<String, dynamic>?;
+
+          if (userData != null) {
+            String? userRole = userData['role'];
+
+            if (userRole == 'member') {
+              // Redirect user to DashboardPage for members
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => DashboardPage()),
+              );
+            } else {
+              // Redirect user to MerchantPage
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        MerchantPage(companymail: userEmail)),
+              );
+            }
+          } else {
+            Fluttertoast.showToast(
+              msg: 'User data is null',
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0,
+            );
+          }
+        } else {
+          Fluttertoast.showToast(
+            msg: 'Failed to retrieve user role',
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
+        }
+      });
     }
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -147,6 +208,23 @@ class _LoginPageState extends State<LoginPage> {
                               await SharedPreferences.getInstance();
                           prefs.setString('userEmail', userEmail);
                           // Navigate the user based on their role
+                          // if (userEmail == 'jatinpatel59968@gmail.com') {
+                          //   // Redirect user to DashboardPage
+                          //   Navigator.pushReplacement(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => DashboardPage()),
+                          //   );
+                          // } else {
+                          //   // Redirect user to MerchantPage
+                          //   Navigator.pushReplacement(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) =>
+                          //             MerchantPage(companymail: userEmail)),
+                          //   );
+                          // }
+
                           if (userEmail == 'jatinpatel59968@gmail.com') {
                             // Redirect user to DashboardPage
                             Navigator.pushReplacement(
@@ -155,13 +233,40 @@ class _LoginPageState extends State<LoginPage> {
                                   builder: (context) => DashboardPage()),
                             );
                           } else {
-                            // Redirect user to MerchantPage
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      MerchantPage(companymail: userEmail)),
-                            );
+                            // Retrieve user role from the User collection
+                            DocumentSnapshot userSnapshot =
+                                await FirebaseFirestore.instance
+                                    .collection('User')
+                                    .doc(userEmail)
+                                    .get();
+                            if (userSnapshot.exists) {
+                               Map<String, dynamic>? userData = userSnapshot.data() as Map<String, dynamic>?;
+                              // String? userRole = userSnapshot.data()?['role'];
+                              String? userRole = userData?['role'];
+                              if (userRole == 'member') {
+                                // Redirect user to DashboardPage for members
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => DashboardPage()),
+                                );
+                              } else {
+                                // Redirect user to MerchantPage
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          MerchantPage(companymail: userEmail)),
+                                );
+                              }
+                            } else {
+                              Fluttertoast.showToast(
+                                msg: 'Failed to retrieve user role',
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                fontSize: 16.0,
+                              );
+                            }
                           }
                         } else {
                           Fluttertoast.showToast(
@@ -194,7 +299,6 @@ class _LoginPageState extends State<LoginPage> {
                         });
                       }
                     },
-
                     child: Text(
                       'Login',
                       style:
