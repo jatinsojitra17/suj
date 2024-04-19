@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class OrdersPage extends StatelessWidget {
   @override
@@ -88,7 +89,8 @@ class OrdersList extends StatelessWidget {
                 ),
               ),
               children: mergedOrders[companyName]!.entries.map((entry) {
-                String date = entry.key;
+                // String date = entry.key;
+                String date = DateFormat('dd-MM-yyyy').format(DateTime.parse(entry.key));
                 List<DocumentSnapshot> orders = entry.value;
                 return Padding(
                   padding:
@@ -99,12 +101,18 @@ class OrdersList extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: ListTile(
-                      title: Text('Date: $date'),
+                      title: Text('Date: $date',style: TextStyle(fontWeight: FontWeight.bold),),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: orders.map((order) {
-                          return Text(
-                            'Model Name: ${order['modelName']}, Quantity: ${order['quantity']} Boxes',
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Model Name: ${order['modelName']},\n Quantity: ${order['quantity']} Boxes',
+                              ),
+                              Container(height: 1,color: Colors.black.withOpacity(0.3),),
+                            ],
                           );
                         }).toList(),
                       ),
