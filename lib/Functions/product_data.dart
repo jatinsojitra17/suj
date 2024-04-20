@@ -558,7 +558,7 @@ class ProductData {
 
   static List<String> sitb02Packing = ['15', '10', '10', '10', '08', '08'];
 
-  static List<String> babylatchPacking = ['18'];
+  static List<String> babylatchPacking = ['18','18'];
 
   static List<String> suggestions = [
     'SI 048 96MM CP',
