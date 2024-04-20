@@ -161,9 +161,9 @@ List<String> getFinishes(String productName) {
     case 'Knob-10':
       return ProductData.knob10Finishes.toList();
     case 'Knob-11':
-      return ProductData.knob10Finishes.toList();
+      return ProductData.knob11Finishes.toList();
     case 'Knob-12':
-      return ProductData.knob10Finishes.toList();
+      return ProductData.knob12Finishes.toList();
     case 'SGH 1011':
       return ProductData.sgh1011Finishes.toList();
     case 'SGH 1012':
@@ -271,6 +271,13 @@ List<String> getPacking(String productName) {
     case 'Knob-11':
     case 'Knob-12':
       return ProductData.s36packing.toList();
+    case 'SITB-01':
+    case 'SITB-03':
+      return ProductData.towerboltPacking.toList();
+    case 'SITB-02':
+      return ProductData.sitb02Packing.toList(); 
+    case 'SIBL-01':
+      return ProductData.babylatchPacking.toList();
     default:
       return [];
   }
