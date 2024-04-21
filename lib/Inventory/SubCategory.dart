@@ -197,6 +197,9 @@ class SubCategoryScreen extends StatelessWidget {
           'SGH 1018',
           'SGH 1019',
         ];
+      
+      case 'Kadi':
+        return ProductData.kadi.toList();
 
       case 'Knobs':
         return ['Knob-10', 'Knob-11', 'Knob-12'];

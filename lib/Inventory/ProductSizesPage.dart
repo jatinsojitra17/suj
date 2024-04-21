@@ -140,268 +140,287 @@ class _ProductSizesPageState extends State<ProductSizesPage> {
             ],
           ),
         ),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: Stack(
-                  children: [
-                    Center(
-                      child: Image.asset(
-                        'assets/Sujin.png',
-                        width: constraints.maxWidth * 0.5,
-                        height: constraints.maxWidth * 0.5,
-                        color: Colors.white,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Sizes:',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 10),
-                          Container(
-                            color: Colors.white.withOpacity(0.3),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 10),
-                            height: 60,
-                            width: double.infinity,
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                children: sizes.map((size) {
-                                  return GestureDetector(
-                                    onTap: () async {
-                                      setState(() {
-                                        _selectedSize = size;
-                                        // Reset selected finish
-                                        _selectedFinish = '';
-                                      });
-                                      // Fetch available finishes for the selected size
-                                      _availableFinishes =
-                                          getFinishes(widget.productName);
-                                    },
-                                    child: Container(
-                                      alignment: Alignment.center,
-                                      margin:
-                                          EdgeInsets.symmetric(horizontal: 10),
-                                      padding: EdgeInsets.all(8),
-                                      decoration: BoxDecoration(
-                                        color: _selectedSize == size
-                                            ? Color(0xFF37BB9B)
-                                            : Colors.transparent,
-                                        borderRadius: BorderRadius.circular(20),
-                                        border: Border.all(
-                                            color: Colors.white, width: 1),
-                                      ),
-                                      child: Text(
-                                        size,
-                                        style: TextStyle(
-                                            color: _selectedSize == size
-                                                ? Colors.white
-                                                : Colors.white.withOpacity(0.5),
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
+        child: Stack(
+          children: [
+            Center(
+              child: Image.asset(
+                'assets/Sujin.png',
+                width: MediaQuery.of(context).size.width *
+                    0.5, // Adjust width as needed
+                height: MediaQuery.of(context).size.width * 0.5,
+                color: Colors.white.withOpacity(0.5),
+                fit: BoxFit.contain,
+              ),
+            ),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints:
+                        BoxConstraints(minHeight: constraints.maxHeight),
+                    child: Stack(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Sizes:',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                          ),
-                          SizedBox(height: 20),
-                          if (_selectedSize.isNotEmpty) ...[
-                            Text(
-                              'Finishes:',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                            Wrap(
-                              spacing: 10,
-                              children: _availableFinishes.map((finish) {
-                                return GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      _selectedFinish = finish;
-                                    });
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 8, horizontal: 16),
-                                    margin: EdgeInsets.only(right: 10),
-                                    decoration: BoxDecoration(
-                                      color: _selectedFinish == finish
-                                          ? Colors.green
-                                          : Colors.transparent,
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                        color: Colors.white,
-                                        width: 1,
-                                      ),
-                                    ),
-                                    child: Text(
-                                      finish,
-                                      style: TextStyle(
-                                        color: _selectedFinish == finish
-                                            ? Colors.white
-                                            : Colors.white.withOpacity(0.5),
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                            if (_selectedFinish.isNotEmpty) ...[
-                              SizedBox(height: 20),
-                              _buildAvailablePieces(),
                               SizedBox(height: 10),
-                              Row(
-                                children: [
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      if (_selectedSize.isNotEmpty &&
-                                          _selectedFinish.isNotEmpty) {
-                                        int currentPieces = availPieces;
-                                        int addedPieces =
-                                            int.tryParse(updatePiece.text) ?? 0;
-                                        int newPiecesCount =
-                                            currentPieces + addedPieces;
-
-                                        updateAvailablePieces(newPiecesCount);
-                                      } else {
-                                        print(
-                                            'Please select size and finish first.');
-                                      }
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      foregroundColor: Colors.white,
-                                      backgroundColor: Colors.green,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                    ),
-                                    child: Text(
-                                      'ADD',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 10),
-                                  Expanded(
-                                    child: SizedBox(
-                                      width: constraints.maxWidth * 0.4,
-                                      child: TextField(
-                                        keyboardType: TextInputType.number,
-                                        controller: updatePiece,
-                                        decoration: InputDecoration(
-                                          hintText: 'Enter quantity (max 1000)',
-                                          fillColor: Colors.white,
-                                          filled: true,
-                                          border: OutlineInputBorder(
+                              Container(
+                                color: Colors.white.withOpacity(0.3),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 10),
+                                height: 60,
+                                width: double.infinity,
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    children: sizes.map((size) {
+                                      return GestureDetector(
+                                        onTap: () async {
+                                          setState(() {
+                                            _selectedSize = size;
+                                            // Reset selected finish
+                                            _selectedFinish = '';
+                                          });
+                                          // Fetch available finishes for the selected size
+                                          _availableFinishes =
+                                              getFinishes(widget.productName);
+                                        },
+                                        child: Container(
+                                          alignment: Alignment.center,
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          padding: EdgeInsets.all(8),
+                                          decoration: BoxDecoration(
+                                            color: _selectedSize == size
+                                                ? Color(0xFF37BB9B)
+                                                : Colors.transparent,
                                             borderRadius:
                                                 BorderRadius.circular(20),
-                                            borderSide: BorderSide(
-                                              color: Colors.white,
-                                            ),
+                                            border: Border.all(
+                                                color: Colors.white, width: 1),
                                           ),
-                                          hintStyle: TextStyle(
-                                            color: Colors.grey,
+                                          child: Text(
+                                            size,
+                                            style: TextStyle(
+                                                color: _selectedSize == size
+                                                    ? Colors.white
+                                                    : Colors.white
+                                                        .withOpacity(0.5),
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 20),
+                              if (_selectedSize.isNotEmpty) ...[
+                                Text(
+                                  'Finishes:',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 10),
+                                Wrap(
+                                  spacing: 10,
+                                  children: _availableFinishes.map((finish) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _selectedFinish = finish;
+                                        });
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 8, horizontal: 16),
+                                        margin: EdgeInsets.only(
+                                            right: 10, bottom: 5),
+                                        decoration: BoxDecoration(
+                                          color: _selectedFinish == finish
+                                              ? Colors.green
+                                              : Colors.transparent,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          border: Border.all(
+                                            color: Colors.white,
+                                            width: 1,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          finish,
+                                          style: TextStyle(
+                                            color: _selectedFinish == finish
+                                                ? Colors.white
+                                                : Colors.white.withOpacity(0.5),
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                       ),
-                                    ),
+                                    );
+                                  }).toList(),
+                                ),
+                                if (_selectedFinish.isNotEmpty) ...[
+                                  SizedBox(height: 20),
+                                  _buildAvailablePieces(),
+                                  SizedBox(height: 10),
+                                  Row(
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          if (_selectedSize.isNotEmpty &&
+                                              _selectedFinish.isNotEmpty) {
+                                            int currentPieces = availPieces;
+                                            int addedPieces = int.tryParse(
+                                                    updatePiece.text) ??
+                                                0;
+                                            int newPiecesCount =
+                                                currentPieces + addedPieces;
+
+                                            updateAvailablePieces(
+                                                newPiecesCount);
+                                          } else {
+                                            print(
+                                                'Please select size and finish first.');
+                                          }
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          foregroundColor: Colors.white,
+                                          backgroundColor: Colors.green,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          'ADD',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: 10),
+                                      Expanded(
+                                        child: SizedBox(
+                                          width: constraints.maxWidth * 0.4,
+                                          child: TextField(
+                                            keyboardType: TextInputType.number,
+                                            controller: updatePiece,
+                                            decoration: InputDecoration(
+                                              hintText:
+                                                  'Enter quantity (max 1000)',
+                                              fillColor: Colors.white,
+                                              filled: true,
+                                              border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                borderSide: BorderSide(
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              hintStyle: TextStyle(
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: 10),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          if (_selectedSize.isNotEmpty &&
+                                              _selectedFinish.isNotEmpty) {
+                                            int currentPieces = availPieces;
+                                            int removedPieces = int.tryParse(
+                                                    updatePiece.text) ??
+                                                0;
+                                            int newPiecesCount =
+                                                currentPieces - removedPieces;
+                                            if (newPiecesCount < 0) {
+                                              newPiecesCount = 0;
+                                            }
+                                            updateAvailablePieces(
+                                                newPiecesCount);
+                                          } else {
+                                            print(
+                                                'Please select size and finish first.');
+                                          }
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          foregroundColor: Colors.white,
+                                          backgroundColor: Colors.red,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          'REMOVE',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(width: 10),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      if (_selectedSize.isNotEmpty &&
-                                          _selectedFinish.isNotEmpty) {
-                                        int currentPieces = availPieces;
-                                        int removedPieces =
-                                            int.tryParse(updatePiece.text) ?? 0;
-                                        int newPiecesCount =
-                                            currentPieces - removedPieces;
-                                        if (newPiecesCount < 0) {
-                                          newPiecesCount = 0;
-                                        }
-                                        updateAvailablePieces(newPiecesCount);
-                                      } else {
-                                        print(
-                                            'Please select size and finish first.');
-                                      }
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      foregroundColor: Colors.white,
-                                      backgroundColor: Colors.red,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10),
+                                  SizedBox(
+                                    height: 25,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: Colors.amber, width: 3)),
+                                        width: constraints.maxWidth * 0.45,
+                                        height: constraints.maxWidth * 0.45,
+                                        child: Image.asset(
+                                          widget.mainCategory == "Baby Latch"
+                                              ? 'assets/Items/Baby Latch.png'
+                                              : 'assets/${widget.mainCategory}/${widget.productName}.png',
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
-                                    ),
-                                    child: Text(
-                                      'REMOVE',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
+                                      Container(
+                                        width: constraints.maxWidth * 0.40,
+                                        height: constraints.maxWidth * 0.45,
+                                        child: CustomTable(
+                                            sizes: getSizes(widget.mainCategory,
+                                                widget.productName),
+                                            packing:
+                                                getPacking(widget.productName)),
                                       ),
-                                    ),
+                                    ],
                                   ),
                                 ],
-                              ),
-                              SizedBox(
-                                height: 25,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Colors.amber, width: 3)),
-                                    width: constraints.maxWidth * 0.45,
-                                    height: constraints.maxWidth * 0.45,
-                                    child: Image.asset(
-                                      'assets/${widget.mainCategory}/${widget.productName}.png',
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  Container(
-                                    width: constraints.maxWidth * 0.40,
-                                    height: constraints.maxWidth * 0.45,
-                                    child: CustomTable(
-                                        sizes: getSizes(widget.mainCategory,
-                                            widget.productName),
-                                        packing:
-                                            getPacking(widget.productName)),
-                                  ),
-                                ],
-                              ),
+                              ],
                             ],
-                          ],
-                        ],
-                      ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-            );
-          },
+                  ),
+                );
+              },
+            ),
+          ],
         ),
       ),
     );

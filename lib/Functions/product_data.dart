@@ -420,7 +420,7 @@ class ProductData {
     'Black/TT',
     'Copper/TT',
     'Metallic/AB',
-    'PVD Gld',
+    'PVD Gold',
     'PVD Rose'
   ];
   static List<String> sitb02Finishes = [
